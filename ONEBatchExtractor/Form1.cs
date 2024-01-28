@@ -1,7 +1,6 @@
 ﻿using HeroesONE_R.Structures;
 using System;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace ONEBatchExtractor {
@@ -19,11 +18,10 @@ namespace ONEBatchExtractor {
                 byte[] readFile = File.ReadAllBytes(foundOnes[i]);
                 Archive currentONE = Archive.FromONEFile(ref readFile);
                 for (int j = 0; j < currentONE.Files.Count; j++) {
-                    var newFntFilePath = dialog.SelectedPath + "\\OUTPUT\\" + foundOnes[i].Split(dialog.SelectedPath + '\\')[1];
-                    var parent = Directory.GetParent(newFntFilePath).FullName;
-                    var fulldir = newFntFilePath.Substring(0, newFntFilePath.Length - 4);
-                    Directory.CreateDirectory(fulldir);
-                    currentONE.Files[j].WriteToFile(fulldir + '\\' + currentONE.Files[j].Name);
+                    var outputPath = dialog.SelectedPath + "\\OUTPUT\\";
+                    Directory.CreateDirectory(outputPath);
+                    byte[] data = currentONE.Files[j].CompressedData;
+                    File.WriteAllBytes(outputPath + '\\' + i + "_" + j + currentONE.Files[j].Name + ".prs", data);
                 }
             }
             MessageBox.Show("DONE");
